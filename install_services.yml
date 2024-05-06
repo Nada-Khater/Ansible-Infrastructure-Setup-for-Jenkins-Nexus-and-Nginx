@@ -1,0 +1,9 @@
+---
+- hosts: all
+  name: test playbook
+  remote_user: ubuntu
+  become: yes
+  roles:
+    # - jenkins
+    # - nexus
+    - nginx

@@ -1,0 +1,59 @@
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
+
+- name: Create directory for SSL certificates
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: '0700'
+
+- name: Install OpenSSL
+  apt:
+    name: openssl
+    state: present
+
+- name: Generate a private key
+  openssl_privatekey:
+    path: /etc/nginx/ssl/private.key
+
+- name: Generate a certificate signing request (CSR)
+  openssl_csr:
+    path: /etc/nginx/ssl/csr.pem
+    privatekey_path: /etc/nginx/ssl/private.key
+    common_name: nada_jenkins.com
+
+- name: Generate a self-signed certificate
+  openssl_certificate:
+    path: /etc/nginx/ssl/cert.crt
+    privatekey_path: /etc/nginx/ssl/private.key
+    csr_path: /etc/nginx/ssl/csr.pem
+    provider: selfsigned
+
+- name: Modify Nginx configuration for Jenkins proxy with HTTPS
+  blockinfile:
+    path: /etc/nginx/sites-available/default
+    block: |
+      server {
+          listen 443 ssl;
+          server_name nada_jenkins.com;
+
+          ssl_certificate /etc/nginx/ssl/cert.crt;
+          ssl_certificate_key /etc/nginx/ssl/private.key;
+
+          location / {
+              proxy_pass http://51.20.142.61:8080;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+      }
+  notify: 
+    - Restart Nginx

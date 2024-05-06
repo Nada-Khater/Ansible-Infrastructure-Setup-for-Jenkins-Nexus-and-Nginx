@@ -1,0 +1,59 @@
+---
+# tasks file for nexus
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Java 8
+  apt:
+    name: openjdk-8-jdk
+    state: present
+
+- name: Download Nexus tarball
+  get_url:
+    url: "https://download.sonatype.com/nexus/3/latest-unix.tar.gz"
+    dest: /tmp/nexus.tar.gz
+
+- name: Create Nexus directory
+  file:
+    path: /opt/nexus
+    state: directory
+
+- name: Extract Nexus tarball
+  ansible.builtin.unarchive:
+    src: /tmp/nexus.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Rename Nexus directory
+  command: mv /opt/nexus/nexus-3.67.1-01 /opt/nexus/nexus
+
+- name: Create Nexus user
+  user:
+    name: nexus
+    system: yes
+    shell: /bin/false
+
+- name: Change Nexus directory ownership
+  file:
+    path: /opt/nexus
+    owner: nexus
+    group: nexus
+    recurse: yes
+
+- name: Copy Nexus systemd service file
+  copy:
+    src: files/nexus.service
+    dest: /etc/systemd/system/nexus.service
+  notify:
+    - Reload systemd
+
+- name: Reload systemd if Nexus service file was updated
+  systemd:
+    daemon_reload: yes
+
+- name: Ensure Nexus service is enabled and started
+  service:
+    name: nexus
+    enabled: yes
+    state: started

@@ -8,15 +8,15 @@ This Ansible project automates the setup of Jenkins, Nexus, and Nginx on localho
 2. **Install Nexus on localhost:**
    - Playbook to install Nexus on localhost.
 3. **Setup AWS Instances:**
-   - Playbook to create two AWS instances (one with Nexus and another with Jenkins).
+   - Create two AWS instances (one with Nexus and another with Jenkins) in aws console.
 4. **Install Nginx on AWS Instance:**
    - Playbook to install Nginx on one of the AWS instances.
 5. **Configure Nginx to Redirect to Jenkins:**
    - Modify Nginx configuration to redirect to Jenkins using only the IP.
 6. **Create DNS Entries in /etc/hosts:**
-   - Playbook to create DNS entries in /etc/hosts for easy access.
+   - Create DNS entries in /etc/hosts for easy access and configure it in nginx.
 7. **Create Self-Signed Certificates for HTTPS:**
-   - Playbook to create self-signed certificates for enabling HTTPS.
+   - Create self-signed certificates for enabling HTTPS.
 
 ## 📁 Directory Structure
 - **jenkins-role/:** Ansible role for Jenkins setup.

@@ -1,4 +1,4 @@
-# 🛠️ Ansible-Infrastructure-Setup-for-Jenkins-Nexus-and-Nginx
+# Ansible-Infrastructure-Setup-for-Jenkins-Nexus-and-Nginx 🛠️
 ## 📝 Overview
 This Ansible project automates the setup of Jenkins, Nexus, and Nginx on localhost as well as on AWS instances. It includes playbooks for installing Jenkins and Nexus on localhost, creating two AWS instances (one with Nexus and another with Jenkins), installing Nginx on one of the instances, configuring Nginx to redirect to Jenkins using only the IP, creating DNS entries in /etc/hosts, and creating self-signed certificates for enabling HTTPS.
 

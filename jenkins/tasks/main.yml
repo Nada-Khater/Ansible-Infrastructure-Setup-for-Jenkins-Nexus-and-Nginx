@@ -3,20 +3,19 @@
   apt:
     update_cache: yes
 
-- name: Install curl and gnupg
+- name: Install curl, gnupg, and unzip
   apt:
     name: "{{ item }}"
     state: present
   loop:
     - curl
     - gnupg
+    - unzip
 
 - name: Add Jenkins APT keyring
-  become: true
   shell: "curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc"
 
 - name: Add Jenkins APT repository
-  become: true
   shell: sudo sh -c 'echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 
 - name: Install Java
@@ -33,6 +32,27 @@
     name: jenkins
     state: present
 
+- name: Download and install Terraform
+  get_url:
+    url: "https://releases.hashicorp.com/terraform/0.15.4/terraform_0.15.4_linux_amd64.zip"
+    dest: "/tmp/terraform.zip"
+
+- name: Unzip Terraform
+  unarchive:
+    src: "/tmp/terraform.zip"
+    dest: "/usr/local/bin/"
+    remote_src: yes
+
+- name: Set permissions for Terraform
+  file:
+    path: "/usr/local/bin/terraform"
+    mode: "0755"
+
+- name: Clean up Terraform zip file
+  file:
+    path: "/tmp/terraform.zip"
+    state: absent
+
 - name: Start Jenkins service
   service:
     name: jenkins
@@ -42,4 +62,3 @@
   service:
     name: jenkins
     state: started
-  become: yes

@@ -36,7 +36,7 @@ This Ansible project automates the setup of Jenkins, Nexus, and Nginx on localho
 2. Update the inventory file with your AWS instance IPs.
 3. Run the main playbook to install services:
    ```
-   ansible-playbook install_services.yml
+   ansible-playbook -i inventory --private-key ~/path_to_your_key.pem install_services.yml
    ```
 4. Access Jenkins using the IP address of the Nginx instance in your browser.
 
